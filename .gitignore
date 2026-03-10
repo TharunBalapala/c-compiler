@@ -1,0 +1,14 @@
+# Build directories
+build/
+
+# Executables
+*.exe
+
+# Assembly files
+*.s
+
+# Object files
+*.o
+
+# Temporary files
+temp.c
