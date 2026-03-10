@@ -3,7 +3,7 @@ int main() {
     int sum = 0;
     
     while (i < 5) {
-        sum = sum + i;
+        x = sum + i;
         i = i + 1;
     }
       printf("The loop computed: %d\n", sum);
