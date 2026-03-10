@@ -1,10 +1,6 @@
 int main() {
-    int x;
-    printf("Enter a number: ");
-    scanf("%d", &x);
-    
-    int result = x * 2;
-    printf("Double your number is: %d\n", result);
-    
+    int @bad_character = 10;
+    printf("This will fail during lexing.\n");
     return 0;
 }
+

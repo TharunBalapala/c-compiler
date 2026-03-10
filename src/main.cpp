@@ -29,10 +29,15 @@ int main(int argc, char* argv[]) {
     std::string source = read_file(input_file);
 
     // 1. Lexing
-    Lexer lexer(source);
-    std::vector<Token> tokens = lexer.tokenize();
-
-    std::cout << "Lexing successful (" << tokens.size() << " tokens)." << std::endl;
+    std::vector<Token> tokens;
+    try {
+        Lexer lexer(source);
+        tokens = lexer.tokenize();
+        std::cout << "Lexing successful (" << tokens.size() << " tokens)." << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Compilation failed during lexing: " << e.what() << std::endl;
+        return 1;
+    }
 
     // 2. Parsing
     Parser parser(tokens);
