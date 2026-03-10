@@ -1,8 +1,11 @@
 int main() {
-    // This is a test comment
-    int x = 5 + 10;
-    if (x == 15) {
-        return x;
+    int i = 0;
+    int sum = 0;
+    
+    while (i < 5) {
+        sum = sum + i;
+        i = i + 1;
     }
-    return 0;
+      printf("The loop computed: %d\n", sum);
+    return 0; // Should return 0+1+2+3+4 = 10
 }

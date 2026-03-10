@@ -223,21 +223,47 @@ std::unique_ptr<ExprNode> Parser::parseAdditive() {
 }
 
 std::unique_ptr<ExprNode> Parser::parseMultiplicative() {
-    std::unique_ptr<ExprNode> expr = parsePrimary();
+    std::unique_ptr<ExprNode> expr = parseUnary();
     while (match(TokenType::Star) || match(TokenType::Slash) || match(TokenType::Percent)) {
         TokenType op = peek(-1).type;
-        std::unique_ptr<ExprNode> right = parsePrimary();
+        std::unique_ptr<ExprNode> right = parseUnary();
         expr = std::make_unique<BinaryExprNode>(op, std::move(expr), std::move(right));
     }
     return expr;
+}
+
+std::unique_ptr<ExprNode> Parser::parseUnary() {
+    if (match(TokenType::Ampersand)) {
+        TokenType op = peek(-1).type;
+        std::unique_ptr<ExprNode> operand = parseUnary();
+        return std::make_unique<UnaryExprNode>(op, std::move(operand));
+    }
+    return parsePrimary();
 }
 
 std::unique_ptr<ExprNode> Parser::parsePrimary() {
     if (match(TokenType::Number)) {
         return std::make_unique<NumberExprNode>(std::stoi(peek(-1).text));
     }
+    if (match(TokenType::StringLiteral)) {
+        return std::make_unique<StringExprNode>(peek(-1).text);
+    }
     if (match(TokenType::Identifier)) {
-        return std::make_unique<VariableExprNode>(peek(-1).text);
+        std::string name = peek(-1).text;
+        
+        // Function call
+        if (match(TokenType::LeftParen)) {
+            std::vector<std::unique_ptr<ExprNode>> args;
+            if (!check(TokenType::RightParen)) {
+                do {
+                    args.push_back(parseExpression());
+                } while (match(TokenType::Comma));
+            }
+            expect(TokenType::RightParen, "Expected ')' after arguments.");
+            return std::make_unique<CallExprNode>(name, std::move(args));
+        }
+        
+        return std::make_unique<VariableExprNode>(name);
     }
     if (match(TokenType::LeftParen)) {
         std::unique_ptr<ExprNode> expr = parseExpression();

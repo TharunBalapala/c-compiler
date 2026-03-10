@@ -6,8 +6,16 @@
 Lexer::Lexer(const std::string& source) 
     : source(source), pos(0), line(1), column(1) {}
 
+bool isAtEnd(size_t p, const std::string& src) {
+    return p >= src.length();
+}
+
+bool Lexer::isAtEnd(int offset) const {
+    return pos + offset >= source.length();
+}
+
 char Lexer::peek(int offset) const {
-    if (pos + offset >= source.length()) return '\0';
+    if (isAtEnd(offset)) return '\0';
     return source[pos + offset];
 }
 
@@ -86,6 +94,28 @@ Token Lexer::readNumber() {
     return {TokenType::Number, text, startLine, startColumn};
 }
 
+Token Lexer::readString() {
+    int startLine = line;
+    int startColumn = column;
+    std::string text;
+
+    advance(); // Consume opening quote
+
+    while (peek() != '"' && !isAtEnd(0)) {
+        // Handle basic escapes lazily for now
+        if (peek() == '\\') {
+            text += advance();
+        }
+        text += advance();
+    }
+
+    if (peek() == '"') {
+        advance(); // Consume closing quote
+    }
+
+    return {TokenType::StringLiteral, text, startLine, startColumn};
+}
+
 std::vector<Token> Lexer::tokenize() {
     std::vector<Token> tokens;
 
@@ -104,6 +134,11 @@ std::vector<Token> Lexer::tokenize() {
 
         if (std::isdigit(c)) {
             tokens.push_back(readNumber());
+            continue;
+        }
+
+        if (c == '"') {
+            tokens.push_back(readString());
             continue;
         }
 
@@ -141,6 +176,7 @@ std::vector<Token> Lexer::tokenize() {
                 break;
             case '&':
                 if (match('&')) { type = TokenType::LogicalAnd; text = "&&"; }
+                else { type = TokenType::Ampersand; }
                 break;
             case '|':
                 if (match('|')) { type = TokenType::LogicalOr; text = "||"; }

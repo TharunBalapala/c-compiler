@@ -5,6 +5,7 @@
 enum class TokenType {
     Identifier,
     Number, // Integer literal
+    StringLiteral, // "..."
     
     // Keywords
     Int,
@@ -28,6 +29,7 @@ enum class TokenType {
     RightParen,    // )
     LeftBrace,     // {
     RightBrace,    // }
+    Ampersand,     // &
 
     EndOfFile,
     Unknown
@@ -54,7 +56,9 @@ private:
     char peek(int offset = 0) const;
     char advance();
     bool match(char expected);
+    bool isAtEnd(int offset = 0) const;
     void skipWhitespace();
     Token readIdentifierOrKeyword();
     Token readNumber();
+    Token readString();
 };

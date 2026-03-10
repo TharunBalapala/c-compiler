@@ -25,6 +25,28 @@ public:
     VariableExprNode(const std::string& n) : name(n) {}
 };
 
+class StringExprNode : public ExprNode {
+public:
+    std::string value;
+    StringExprNode(const std::string& v) : value(v) {}
+};
+
+class CallExprNode : public ExprNode {
+public:
+    std::string callee;
+    std::vector<std::unique_ptr<ExprNode>> arguments;
+    CallExprNode(const std::string& c, std::vector<std::unique_ptr<ExprNode>> args)
+        : callee(c), arguments(std::move(args)) {}
+};
+
+class UnaryExprNode : public ExprNode {
+public:
+    TokenType op; // e.g., TokenType::Ampersand
+    std::unique_ptr<ExprNode> operand;
+    UnaryExprNode(TokenType op, std::unique_ptr<ExprNode> operand)
+        : op(op), operand(std::move(operand)) {}
+};
+
 class BinaryExprNode : public ExprNode {
 public:
     TokenType op;

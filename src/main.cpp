@@ -3,6 +3,8 @@
 #include <sstream>
 #include "lexer.h"
 #include "parser.h"
+#include "semantic.h"
+#include "codegen.h"
 
 std::string read_file(const std::string& filepath) {
     std::ifstream file(filepath);
@@ -34,8 +36,9 @@ int main(int argc, char* argv[]) {
 
     // 2. Parsing
     Parser parser(tokens);
+    std::unique_ptr<ProgramNode> ast = nullptr;
     try {
-        std::unique_ptr<ProgramNode> ast = parser.parse();
+        ast = parser.parse();
         std::cout << "Parsing successful! AST root contains " 
                   << ast->functions.size() << " function(s)." << std::endl;
     } catch (const std::exception& e) {
@@ -43,5 +46,27 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // 3. Semantic Analysis
+    SemanticAnalyzer semantic;
+    try {
+        semantic.analyze(ast.get());
+        std::cout << "Semantic analysis successful!" << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Compilation failed during semantic analysis: " << e.what() << std::endl;
+        return 1;
+    }
+
+    // 4. Code Generation
+    std::string out_file = input_file.substr(0, input_file.find_last_of('.')) + ".s";
+    CodeGenerator codegen(out_file);
+    try {
+        codegen.generate(ast.get());
+        std::cout << "Code generation successful! Wrote assembly to: " << out_file << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Compilation failed during code generation: " << e.what() << std::endl;
+        return 1;
+    }
+
+    std::cout << "Compilation completed successfully!" << std::endl;
     return 0;
 }

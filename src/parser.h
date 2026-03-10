@@ -40,5 +40,6 @@ private:
     std::unique_ptr<ExprNode> parseRelational();
     std::unique_ptr<ExprNode> parseAdditive();
     std::unique_ptr<ExprNode> parseMultiplicative();
+    std::unique_ptr<ExprNode> parseUnary();
     std::unique_ptr<ExprNode> parsePrimary();
 };
