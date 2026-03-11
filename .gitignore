@@ -12,3 +12,6 @@ build/
 
 # Temporary files
 temp.c
+
+# Claude Code local settings
+.claude/

@@ -28,6 +28,7 @@ private:
     void leaveScope();
 
     std::string newLabel(const std::string& prefix = "L");
+    std::string formatOffset(int offset) const;
 
     void visit(FunctionDeclNode* node);
     void visit(BlockStmtNode* node);

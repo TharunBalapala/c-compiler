@@ -91,9 +91,9 @@ void SemanticAnalyzer::visit(ExprNode* node) {
                 throw std::runtime_error("Semantic error");
             }
         }
-    } else if (auto* numExpr = dynamic_cast<NumberExprNode*>(node)) {
+    } else if (dynamic_cast<NumberExprNode*>(node)) {
         // Nothing to check for integer literals
-    } else if (auto* strExpr = dynamic_cast<StringExprNode*>(node)) {
+    } else if (dynamic_cast<StringExprNode*>(node)) {
         // Nothing to check for string literals
     } else if (auto* callExpr = dynamic_cast<CallExprNode*>(node)) {
         // In a full compiler we would check if callee exists in symbol table

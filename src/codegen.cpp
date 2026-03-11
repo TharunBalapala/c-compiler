@@ -19,6 +19,11 @@ std::string CodeGenerator::newLabel(const std::string& prefix) {
     return prefix + std::to_string(labelCount++);
 }
 
+std::string CodeGenerator::formatOffset(int offset) const {
+    if (offset >= 0) return "+" + std::to_string(offset);
+    return std::to_string(offset); // negative already includes '-'
+}
+
 void CodeGenerator::enterScope() {
     int startOffset = currentScope ? currentScope->currentOffset : 0;
     scopes.push_back(std::make_unique<Scope>(currentScope, startOffset));
@@ -74,8 +79,17 @@ void CodeGenerator::visit(FunctionDeclNode* node) {
 
     enterScope();
     
-    // If we had parameters (e.g. argc, argv), we'd push them to stack here from registers (rdi, rsi, etc.)
-    // For simplicity, we ignore parameters in this initial limited subset
+    // Register function parameters in codegen scope with CDECL positive offsets
+    // Stack layout after prologue:
+    //   [ebp + 0]  = saved ebp
+    //   [ebp + 4]  = return address
+    //   [ebp + 8]  = 1st parameter
+    //   [ebp + 12] = 2nd parameter, etc.
+    int paramOffset = 8;
+    for (const auto& param : node->parameters) {
+        currentScope->symbols[param] = {param, "int", paramOffset};
+        paramOffset += 4;
+    }
     
     visit(node->body.get());
     
@@ -103,10 +117,10 @@ void CodeGenerator::visit(StmtNode* node) {
         if (varDecl->initializer) {
             visit(varDecl->initializer.get());
             // Result is in eax, store it in the local var on stack
-            out << "  mov dword ptr [ebp" << sym->offset << "], eax\n";
+            out << "  mov dword ptr [ebp" << formatOffset(sym->offset) << "], eax\n";
         } else {
             // Default initialize to 0
-            out << "  mov dword ptr [ebp" << sym->offset << "], 0\n";
+            out << "  mov dword ptr [ebp" << formatOffset(sym->offset) << "], 0\n";
         }
     } else if (auto* exprStmt = dynamic_cast<ExprStmtNode*>(node)) {
         visit(exprStmt->expr.get());
@@ -168,7 +182,7 @@ void CodeGenerator::visit(ExprNode* node) {
         out << "  lea eax, [" << strings[strExpr->value] << "]\n";
     } else if (auto* varExpr = dynamic_cast<VariableExprNode*>(node)) {
         auto sym = currentScope->resolve(varExpr->name);
-        out << "  mov eax, dword ptr [ebp" << sym->offset << "]\n";
+        out << "  mov eax, dword ptr [ebp" << formatOffset(sym->offset) << "]\n";
     } else if (auto* callExpr = dynamic_cast<CallExprNode*>(node)) {
         // Evaluate arguments (CDECL pushes them right-to-left)
         for (auto it = callExpr->arguments.rbegin(); it != callExpr->arguments.rend(); ++it) {
@@ -186,7 +200,7 @@ void CodeGenerator::visit(ExprNode* node) {
         if (unaryExpr->op == TokenType::Ampersand) {
             auto* varExpr = dynamic_cast<VariableExprNode*>(unaryExpr->operand.get());
             auto sym = currentScope->resolve(varExpr->name);
-            out << "  lea eax, [ebp" << sym->offset << "]\n";
+            out << "  lea eax, [ebp" << formatOffset(sym->offset) << "]\n";
         }
     } else if (auto* binaryExpr = dynamic_cast<BinaryExprNode*>(node)) {
         
@@ -197,7 +211,7 @@ void CodeGenerator::visit(ExprNode* node) {
             
             visit(binaryExpr->rhs.get());
             // Store eax into the stack location
-            out << "  mov dword ptr [ebp" << sym->offset << "], eax\n";
+            out << "  mov dword ptr [ebp" << formatOffset(sym->offset) << "], eax\n";
             return;
         }
 

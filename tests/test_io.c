@@ -1,6 +1,9 @@
+
 int main() {
-    int @bad_character = 10;
-    printf("This will fail during lexing.\n");
+    int b;
+    scanf("%d",&b);
+    b=b*5;
+    printf("%d",b);
     return 0;
 }
 

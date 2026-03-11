@@ -7,5 +7,5 @@ int main() {
         i = i + 1;
     }
       printf("The loop computed: %d\n", sum);
-    return 0; // Should return 0+1+2+3+4 = 10
+    return 0;
 }
