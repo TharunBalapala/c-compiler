@@ -1,4 +1,4 @@
-# Miniature C Compiler
+# C Compiler
 
 A hand-written, miniature C compiler implemented from scratch in modern C++17. This project is built specifically for academic demonstration, prioritizing clarity, educational value, and the transparency of compiler phases over complex build systems or production features.
 
@@ -10,7 +10,7 @@ It pipelines a subset of the C programming language completely through **Lexical
 
 - **No Parser Generators:** Built without external tools like Flex or Bison. The parser is a handwritten **Recursive Descent Parser**, demonstrating top-down grammatical analysis.
 - **Verbose Compiler Phases:** The compiler visually outputs the results of its internal passes (Token streams, AST trees, Symbol Tables) so professors and students can clearly verify its internal state.
-- **x86 Machine Translation:** Generates raw `.intel_syntax` assembly, modeling the **CDECL calling convention** to properly handle function parameters on the stack and interface with the C Standard Library (`printf`, `scanf`).
+- **x86 Machine Translation & Automated Assembly:** Generates raw `.intel_syntax` assembly and automatically invokes `gcc` to natively assemble the `.s` into a runnable `.exe` on Windows. Models the **CDECL calling convention** to properly handle function parameters on the stack and interface with the C Standard Library (`printf`, `scanf`).
 - **Core C Subset:** 
   - `int` variables and arithmetic (`+`, `-`, `*`, `/`, `%`)
   - Control Flow (`if/else`, `while`, `return`)
@@ -30,8 +30,8 @@ This project cleanly separates the compilation process into four distinct module
    Consumes the token stream to build an **Abstract Syntax Tree (AST)** representing the hierarchical grammar of the code. The `ASTPrinter` visually dumps this tree to the console.
 3. **Phase 3: Semantic Analysis (`semantic.cpp`)**
    A tree-walking pass that builds hierarchical **Symbol Tables** mapping variables to stack offsets, enforcing scoping rules and catching undeclared variables.
-4. **Phase 4: Code Generation (`codegen.cpp`)**
-   A final tree-walker that translates the validated AST into Windows 32-bit Intel Assembly (`.s`), managing `ebp/esp` stack frames and conditional jumps.
+4. **Phase 4 & 5: Code Generation & Assembly (`codegen.cpp` -> `gcc`)**
+   A final tree-walker that translates the validated AST into Windows 32-bit Intel Assembly (`.s`), managing `ebp/esp` stack frames and conditional jumps. Finally, it delegates to `gcc` via a highly-authentic system pipeline to instantly assemble a ready-to-run `.exe`.
 
 ---
 
@@ -53,15 +53,9 @@ We provide a comprehensive demonstration file `test.c` that includes a while-loo
 ```powershell
 .\compiler.exe test.c
 ```
-*(Watch the console! The compiler will output its Tokens, Abstract Syntax Tree, and Symbol Table registrations).*
+*(Watch the console! The compiler will output its Tokens, Abstract Syntax Tree, Symbol Table registrations, and will automatically invoke GCC to build the native executable).*
 
-### 3. Assemble the Output
-The compiler will generate a `test.s` assembly file. Assemble it into a final native executable using `gcc`:
-```powershell
-gcc -m32 -masm=intel -o test.exe test.s
-```
-
-### 4. Execute
+### 3. Execute
 Run the final generated program:
 ```powershell
 .\test.exe

@@ -94,17 +94,37 @@ int main(int argc, char* argv[]) {
 
     // 4. Code Generation
     std::cout << "\n--- Phase 4: Code Generation (x86-32 Assembly) ---\n";
-    std::string out_file = input_file.substr(0, input_file.find_last_of('.')) + ".s";
-    CodeGenerator codegen(out_file);
-    try {
-        codegen.generate(ast.get());
-        std::cout << "Code generation successful! Wrote generic assembly to: " << out_file << "\n";
-    } catch (const std::exception& e) {
-        std::cerr << "Compilation failed during code generation: " << e.what() << std::endl;
-        return 1;
+    std::string base_name = input_file.substr(0, input_file.find_last_of('.'));
+    std::string out_file = base_name + ".s";
+    std::string exe_file = base_name + ".exe";
+    
+    {
+        CodeGenerator codegen(out_file);
+        try {
+            codegen.generate(ast.get());
+            std::cout << "Code generation successful! Wrote generic assembly to: " << out_file << "\n";
+        } catch (const std::exception& e) {
+            std::cerr << "Compilation failed during code generation: " << e.what() << std::endl;
+            return 1;
+        }
     }
 
+    // 5. Native Assembly (via GCC)
+    std::cout << "\n--- Phase 5: Native Assembly ---\n";
+    std::cout << "Invoking GCC to assemble " << out_file << " into " << exe_file << "...\n";
+    std::string gcc_cmd = "gcc -m32 -masm=intel -o " + exe_file + " " + out_file;
+    int gcc_status = system(gcc_cmd.c_str());
+    
     std::cout << "\n============================================\n";
-    std::cout << "Compilation completed successfully!\n" << std::endl;
+    if (gcc_status == 0) {
+        std::cout << "Compilation completed successfully!\n";
+        std::cout << "Executable built: " << exe_file << "\n";
+        std::cout << "Run it using: .\\" << exe_file << "\n";
+    } else {
+        std::cerr << "Compilation failed during native assembly phase.\n";
+        return 1;
+    }
+    
+    std::cout << "============================================\n\n";
     return 0;
 }
