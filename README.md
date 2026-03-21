@@ -1,4 +1,4 @@
-# Academic C Compiler
+# Miniature C Compiler
 
 A hand-written, miniature C compiler implemented from scratch in modern C++17. This project is built specifically for academic demonstration, prioritizing clarity, educational value, and the transparency of compiler phases over complex build systems or production features.
 
