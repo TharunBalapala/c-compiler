@@ -2,6 +2,18 @@
 #include <string>
 #include <vector>
 
+/**
+ * ============================================================================
+ * PHASE 1: LEXICAL ANALYSIS (The Lexer / Scanner)
+ * ============================================================================
+ * The Lexer is the first phase of the compiler. It reads the raw source code 
+ * (a string of characters) and converts it into a sequence of meaningful 
+ * groups called 'Tokens' (e.g., Keywords, Identifiers, Operators, Literals).
+ * 
+ * Concept: Finite State Machine / Linear Scan
+ * Time Complexity: O(N) where N is the length of the source code.
+ */
+
 enum class TokenType {
     Identifier,
     Number, // Integer literal

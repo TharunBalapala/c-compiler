@@ -1,5 +1,0 @@
-﻿Compiling: tests\test_func.c
-Lexing successful (43 tokens).
-Parsing successful! AST root contains 2 function(s).
-Semantic analysis successful!
-

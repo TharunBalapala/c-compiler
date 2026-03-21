@@ -1,72 +1,109 @@
-# Miniature C Compiler in C++
+# Academic C Compiler
 
-![Language](https://img.shields.io/badge/Language-C++17-blue.svg)
-![Target](https://img.shields.io/badge/Target-x86_32-red.svg)
-![Status](https://img.shields.io/badge/Status-Functional-success.svg)
+A hand-written, miniature C compiler implemented from scratch in modern C++17. This project is built specifically for academic demonstration, prioritizing clarity, educational value, and the transparency of compiler phases over complex build systems or production features.
 
-A hand-written, miniature C compiler implemented from scratch in modern C++. This compiler pipelines a subset of the C programming language completely through Lexical Analysis, syntax tree parsing, Semantic Analysis, and Code Generation directly into executable `x86` (32-bit Intel syntax) assembly.
+It pipelines a subset of the C programming language completely through **Lexical Analysis**, **Syntax Analysis**, **Semantic Analysis**, and **Code Generation** directly into executable `x86` (32-bit Intel syntax) assembly.
 
-The project demonstrates the core architectural components of a compiler without relying on external frontend tools like Flex or Bison, and links with `gcc` (MinGW) on Windows to create standalone native executables.
+---
 
-## 🚀 Features Supported
-- **Data Types:** `int` and integer math operations (`+`, `-`, `*`, `/`, `%`)
-- **Control Flow:** `if`, `else`, `while`, and `return` statements
-- **Logic & Relational Operators:** (`==`, `!=`, `<`, `>`, `<=`, `>=`, `&&`, `||`)
-- **Variables:** Local variable declarations, initialization, and assignment.
-- **Pointers / Addresses:** Specifically the address-of unary operator (`&`), evaluated securely through `lea` stack operations.
-- **Strings:** Double-quoted `"string literals"`, safely allocated in the executable's `.data` segment.
-- **Standard Library Interoperability:** Implements the `stdcall`/`cdecl` calling convention on the stack, allowing seamless external calls to standard functions like `printf` and `scanf`.
+## 🚀 Features & Academic Focus
 
-## 🧠 Architecture Pipeline
+- **No Parser Generators:** Built without external tools like Flex or Bison. The parser is a handwritten **Recursive Descent Parser**, demonstrating top-down grammatical analysis.
+- **Verbose Compiler Phases:** The compiler visually outputs the results of its internal passes (Token streams, AST trees, Symbol Tables) so professors and students can clearly verify its internal state.
+- **x86 Machine Translation:** Generates raw `.intel_syntax` assembly, modeling the **CDECL calling convention** to properly handle function parameters on the stack and interface with the C Standard Library (`printf`, `scanf`).
+- **Core C Subset:** 
+  - `int` variables and arithmetic (`+`, `-`, `*`, `/`, `%`)
+  - Control Flow (`if/else`, `while`, `return`)
+  - Relational Operators (`==`, `!=`, `<`, `>`, `<=`, `>=`)
+  - User-defined functions with parameters
+  - Pointers (`&` address-of)
 
-1. **Lexical Analysis (`lexer`):** Reads the raw C source code character-by-character and groups them into meaningful `Token` objects (e.g., Identifying the difference between the `=` assignment and `==` equality operators).
-2. **Syntax Analysis (`parser`):** Uses a Recursive Descent Parsing algorithm to construct an Abstract Syntax Tree (AST). It enforces the grammatical rules of C, ensuring expressions and statements are nested correctly according to the order of operations.
-3. **Semantic Analysis (`semantic`):** A tree-walker that manages variable scope. It maps variable declarations and guarantees that variables referenced in expressions have actually been declared in the active block scope. 
-4. **Code Generation (`codegen`):** A second tree-walker that translates the validated AST into native Windows 32-bit Intel Assembly (`.intel_syntax`). It dynamically tracks stack offsets (`ebp - X`), pushes variables through CPU registers (`eax`, `ecx`), and generates uniquely labeled jumps for control flow loops.
+---
 
-## 💻 Building and Testing
+## 🧠 The Compiler Pipeline
+
+This project cleanly separates the compilation process into four distinct modules (see `src/` for source code):
+
+1. **Phase 1: Lexical Analysis (`lexer.cpp`)**
+   Reads raw source code characters and converts them into a linear stream of `Token` objects.
+2. **Phase 2: Syntax Analysis (`parser.cpp` & `ast_printer.cpp`)**
+   Consumes the token stream to build an **Abstract Syntax Tree (AST)** representing the hierarchical grammar of the code. The `ASTPrinter` visually dumps this tree to the console.
+3. **Phase 3: Semantic Analysis (`semantic.cpp`)**
+   A tree-walking pass that builds hierarchical **Symbol Tables** mapping variables to stack offsets, enforcing scoping rules and catching undeclared variables.
+4. **Phase 4: Code Generation (`codegen.cpp`)**
+   A final tree-walker that translates the validated AST into Windows 32-bit Intel Assembly (`.s`), managing `ebp/esp` stack frames and conditional jumps.
+
+---
+
+## 💻 Building and Running
+
+This project intentionally avoids complex build systems like CMake to ensure it is trivially easy to compile and evaluate on any machine with `g++`.
 
 ### Prerequisites
-- `g++` (MinGW) compiler installed and accessible in your system PATH.
+- `g++` (MinGW) installed and added to your system PATH.
 
-### Quick Start (Windows PowerShell)
+### 1. Compile the Compiler
+Run the following single command from the root of the repository to compile the compiler itself:
+```powershell
+g++ -std=c++17 -Wall -Wextra src/*.cpp -o compiler.exe
+```
 
-We provide an automated testing script (`run_test.ps1`) that sequentially compiles the C++ compiler project, compiles a target `test.c` script, assembles the output, and executes it.
+### 2. Run the Compiler (Test the C code)
+We provide a comprehensive demonstration file `test.c` that includes a while-loop, standard IO, and user-defined functions. Pass it to the compiler:
+```powershell
+.\compiler.exe test.c
+```
+*(Watch the console! The compiler will output its Tokens, Abstract Syntax Tree, and Symbol Table registrations).*
 
-1. Clone the repository:
-   ```powershell
-   git clone https://github.com/TharunBalapala/c-compiler.git
-   cd c-compiler
-   ```
+### 3. Assemble the Output
+The compiler will generate a `test.s` assembly file. Assemble it into a final native executable using `gcc`:
+```powershell
+gcc -m32 -masm=intel -o test.exe test.s
+```
 
-2. Run the automated build/test pipeline:
-   ```powershell
-   .\run_test.ps1 tests\test.c
-   ```
+### 4. Execute
+Run the final generated program:
+```powershell
+.\test.exe
+```
 
-3. **Or, to interact with the standard library test (`printf` and `scanf`):**
-   ```powershell
-   .\run_test.ps1 tests\test_io.c
-   ```
+---
 
-This script will automatically output the compiled assembly `.s` syntax alongside an executable `.exe` file native to your computer, and print the Exit Code returned by your custom C script.
-
-## 📝 Example Source (`test_io.c`)
+## 📝 Example C Program (`test.c`)
+The provided `test.c` demonstrates the compiler's full capabilities:
 
 ```c
+int add(int a, int b) {
+    return a + b;
+}
+
+int multiply(int a, int b) {
+    return a * b;
+}
+
 int main() {
-    int x;
-    printf("Enter a number: ");
-    scanf("%d", &x);
+    int i = 0;
+    int sum = 0;
+    int user_input;
     
-    int result = x * 2;
-    printf("Double your number is: %d\n", result);
+    while (i < 5) {
+        sum = sum + i;
+        i = i + 1;
+    }
+    printf("The loop computed sum: %d\n", sum);
+
+    printf("Enter a number to double: ");
+    scanf("%d", &user_input);
+
+    int doubled = multiply(user_input, 2);
+    int final_result = add(sum, doubled);
     
+    printf("Your number doubled is: %d\n", doubled);
+    printf("Sum + Doubled = %d\n", final_result);
+
     return 0;
 }
 ```
 
-*Compiled output directly handles Windows Stdlib CDECL bridging for you!*
-
-## 📜 License
-This project is open-source and available for educational purposes to understand the magic that translates high-level text into machine electricity.
+---
+*Created for Academic Demonstration of Compiler Design Principles.*
