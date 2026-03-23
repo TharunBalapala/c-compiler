@@ -99,10 +99,9 @@ Token Lexer::readString() {
     int startColumn = column;
     std::string text;
 
-    advance(); // Consume opening quote
+    advance(); 
 
     while (peek() != '"' && !isAtEnd(0)) {
-        // Handle basic escapes lazily for now
         if (peek() == '\\') {
             text += advance();
         }
@@ -110,7 +109,7 @@ Token Lexer::readString() {
     }
 
     if (peek() == '"') {
-        advance(); // Consume closing quote
+        advance(); 
     }
 
     return {TokenType::StringLiteral, text, startLine, startColumn};
@@ -142,8 +141,7 @@ std::vector<Token> Lexer::tokenize() {
             continue;
         }
 
-        // Symbols and Operators
-        advance(); // consume the character
+        advance(); 
         TokenType type = TokenType::Unknown;
         std::string text(1, c);
 

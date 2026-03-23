@@ -3,8 +3,6 @@
 #include <iostream>
 #include <string>
 
-// Academic: A utility class that walks the Abstract Syntax Tree (AST)
-// and prints it in a human-readable hierarchical format.
 class ASTPrinter {
 public:
     void print(ProgramNode* ast);

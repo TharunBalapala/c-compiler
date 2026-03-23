@@ -4,20 +4,6 @@
 #include "lexer.h"
 #include "ast.h"
 
-/**
- * ============================================================================
- * PHASE 2: SYNTAX ANALYSIS (The Parser)
- * ============================================================================
- * The Parser takes the linear stream of Tokens from the Lexer and constructs
- * a hierarchical data structure called an Abstract Syntax Tree (AST). The AST
- * represents the grammatical structure of the program based on C language rules.
- * 
- * Implementation Approach: Recursive Descent Parsing
- * This is a top-down parsing technique built from a set of mutually recursive
- * functions (like `parseStatement()`, `parseExpression()`) that directly map 
- * to the language's grammar rules. Operator precedence is encoded naturally 
- * by the depth of the recursive calls.
- */
 
 class Parser {
 public:

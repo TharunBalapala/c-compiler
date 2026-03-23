@@ -4,7 +4,6 @@
 #include <memory>
 #include "lexer.h"
 
-// Base AST Node
 class ASTNode {
 public:
     virtual ~ASTNode() = default;
@@ -108,7 +107,7 @@ public:
 class FunctionDeclNode : public ASTNode {
 public:
     std::string name;
-    std::vector<std::string> parameters; // Simplified: assume all are int
+    std::vector<std::string> parameters; 
     std::unique_ptr<BlockStmtNode> body;
     FunctionDeclNode(const std::string& n, std::vector<std::string> params, std::unique_ptr<BlockStmtNode> b)
         : name(n), parameters(std::move(params)), body(std::move(b)) {}

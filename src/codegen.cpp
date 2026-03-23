@@ -39,15 +39,9 @@ void CodeGenerator::leaveScope() {
 void CodeGenerator::generate(ProgramNode* ast) {
     out << ".intel_syntax noprefix\n";
     
-    // Pre-pass to find strings could happen here, or we can just emit data at the end.
-    // However, GCC assemblers generally prefer text/data sections clearly delimited.
-    // For simplicity, we will accumulate strings during expression visiting, 
-    // and write them out at the VERY end of the file in a `.data` section.
-    
     out << ".text\n";
     out << ".global _main\n";
     
-    // Add external declarations for standard library functions
     out << ".extern _printf\n";
     out << ".extern _scanf\n";
 
@@ -55,7 +49,7 @@ void CodeGenerator::generate(ProgramNode* ast) {
         visit(func.get());
     }
 
-    // Now emit the .data section for all discovered strings
+    
     if (!strings.empty()) {
         out << "\n.data\n";
         for (const auto& pair : strings) {
@@ -66,25 +60,17 @@ void CodeGenerator::generate(ProgramNode* ast) {
 }
 
 void CodeGenerator::visit(FunctionDeclNode* node) {
-    // Generate function label (prepend underscore for Windows 32-bit CDECL)
     if (node->name == "main") out << "_main:\n";
     else out << "_" << node->name << ":\n";
     
     // Prologue
     out << "  push ebp\n";
     out << "  mov ebp, esp\n";
-    
-    // Simplification: Allocate 64 bytes for locals
     out << "  sub esp, 64\n";
 
     enterScope();
     
-    // Register function parameters in codegen scope with CDECL positive offsets
-    // Stack layout after prologue:
-    //   [ebp + 0]  = saved ebp
-    //   [ebp + 4]  = return address
-    //   [ebp + 8]  = 1st parameter
-    //   [ebp + 12] = 2nd parameter, etc.
+
     int paramOffset = 8;
     for (const auto& param : node->parameters) {
         currentScope->symbols[param] = {param, "int", paramOffset};
