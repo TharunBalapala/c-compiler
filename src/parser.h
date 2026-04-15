@@ -27,6 +27,7 @@ private:
     std::unique_ptr<BlockStmtNode> parseBlock();
     std::unique_ptr<StmtNode> parseIfStatement();
     std::unique_ptr<StmtNode> parseWhileStatement();
+    std::unique_ptr<StmtNode> parseForStatement();
     std::unique_ptr<StmtNode> parseReturnStatement();
     std::unique_ptr<StmtNode> parseDeclarationOrStatement();
     std::unique_ptr<VarDeclNode> parseVarDeclaration();

@@ -97,6 +97,27 @@ void ASTPrinter::visit(StmtNode* node, int depth) {
         printIndent(depth + 1);
         std::cout << "Body:\n";
         visit(whileStmt->body.get(), depth + 2);
+    } else if (auto* forStmt = dynamic_cast<ForStmtNode*>(node)) {
+        printIndent(depth);
+        std::cout << "ForStatement\n";
+        if (forStmt->init) {
+            printIndent(depth + 1);
+            std::cout << "Init:\n";
+            visit(forStmt->init.get(), depth + 2);
+        }
+        if (forStmt->condition) {
+            printIndent(depth + 1);
+            std::cout << "Condition:\n";
+            visit(forStmt->condition.get(), depth + 2);
+        }
+        if (forStmt->increment) {
+            printIndent(depth + 1);
+            std::cout << "Increment:\n";
+            visit(forStmt->increment.get(), depth + 2);
+        }
+        printIndent(depth + 1);
+        std::cout << "Body:\n";
+        visit(forStmt->body.get(), depth + 2);
     } else if (auto* blockStmt = dynamic_cast<BlockStmtNode*>(node)) {
         visit(blockStmt, depth);
     }

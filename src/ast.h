@@ -93,6 +93,16 @@ public:
         : condition(std::move(cond)), body(std::move(b)) {}
 };
 
+class ForStmtNode : public StmtNode {
+public:
+    std::unique_ptr<StmtNode> init;
+    std::unique_ptr<ExprNode> condition;
+    std::unique_ptr<ExprNode> increment;
+    std::unique_ptr<StmtNode> body;
+    ForStmtNode(std::unique_ptr<StmtNode> init, std::unique_ptr<ExprNode> cond, std::unique_ptr<ExprNode> inc, std::unique_ptr<StmtNode> b)
+        : init(std::move(init)), condition(std::move(cond)), increment(std::move(inc)), body(std::move(b)) {}
+};
+
 // Declarations
 class DeclNode : public StmtNode {};
 

@@ -152,6 +152,29 @@ void CodeGenerator::visit(StmtNode* node) {
         visit(whileStmt->body.get());
         out << "  jmp " << startLabel << "\n";
         out << endLabel << ":\n";
+    } else if (auto* forStmt = dynamic_cast<ForStmtNode*>(node)) {
+        std::string startLabel = newLabel(".L_for_start");
+        std::string endLabel = newLabel(".L_for_end");
+
+        if (forStmt->init) {
+            visit(forStmt->init.get());
+        }
+
+        out << startLabel << ":\n";
+        if (forStmt->condition) {
+            visit(forStmt->condition.get());
+            out << "  cmp eax, 0\n";
+            out << "  je " << endLabel << "\n";
+        }
+
+        visit(forStmt->body.get());
+
+        if (forStmt->increment) {
+            visit(forStmt->increment.get());
+        }
+        
+        out << "  jmp " << startLabel << "\n";
+        out << endLabel << ":\n";
     } else if (auto* blockStmt = dynamic_cast<BlockStmtNode*>(node)) {
         visit(blockStmt);
     }

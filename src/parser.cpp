@@ -32,7 +32,7 @@ void Parser::expect(TokenType expected, const std::string& message) {
         advance();
         return;
     }
-    std::cerr << "Parse Error at line " << peek().line << ":" << peek().column 
+    std::cerr << "\x1b[31mParse Error\x1b[0m at line " << peek().line << ":" << peek().column 
               << " - " << message << std::endl;
     throw std::runtime_error("Parse error");
 }
@@ -109,6 +109,7 @@ std::unique_ptr<VarDeclNode> Parser::parseVarDeclaration() {
 std::unique_ptr<StmtNode> Parser::parseStatement() {
     if (match(TokenType::If)) return parseIfStatement();
     if (match(TokenType::While)) return parseWhileStatement();
+    if (match(TokenType::For)) return parseForStatement();
     if (match(TokenType::Return)) return parseReturnStatement();
     if (check(TokenType::LeftBrace)) return parseBlock();
     
@@ -138,6 +139,33 @@ std::unique_ptr<StmtNode> Parser::parseWhileStatement() {
     std::unique_ptr<StmtNode> body = parseStatement();
     
     return std::make_unique<WhileStmtNode>(std::move(condition), std::move(body));
+}
+
+std::unique_ptr<StmtNode> Parser::parseForStatement() {
+    expect(TokenType::LeftParen, "Expected '(' after 'for'.");
+    
+    std::unique_ptr<StmtNode> init = nullptr;
+    if (match(TokenType::SemiColon)) {
+        init = nullptr;
+    } else {
+        init = parseDeclarationOrStatement(); // parses expression/decl and semi-colon!
+    }
+
+    std::unique_ptr<ExprNode> condition = nullptr;
+    if (!check(TokenType::SemiColon)) {
+        condition = parseExpression();
+    }
+    expect(TokenType::SemiColon, "Expected ';' after loop condition.");
+
+    std::unique_ptr<ExprNode> increment = nullptr;
+    if (!check(TokenType::RightParen)) {
+        increment = parseExpression();
+    }
+    expect(TokenType::RightParen, "Expected ')' after for clauses.");
+
+    std::unique_ptr<StmtNode> body = parseStatement();
+
+    return std::make_unique<ForStmtNode>(std::move(init), std::move(condition), std::move(increment), std::move(body));
 }
 
 std::unique_ptr<StmtNode> Parser::parseReturnStatement() {
@@ -270,7 +298,7 @@ std::unique_ptr<ExprNode> Parser::parsePrimary() {
         expect(TokenType::RightParen, "Expected ')' after expression.");
         return expr;
     }
-    std::cerr << "Parse Error at line " << peek().line << ":" << peek().column 
+    std::cerr << "\x1b[31mParse Error\x1b[0m at line " << peek().line << ":" << peek().column 
               << " - Expected expression." << std::endl;
     throw std::runtime_error("Parse error");
 }

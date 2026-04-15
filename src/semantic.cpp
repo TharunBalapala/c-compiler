@@ -26,7 +26,7 @@ void SemanticAnalyzer::visit(FunctionDeclNode* node) {
     // Add parameters to scope
     for (const auto& param : node->parameters) {
         if (!currentScope->declare(param, "int")) {
-            std::cerr << "Semantic Error: Parameter '" << param << "' already defined." << std::endl;
+            std::cerr << "\x1b[31mSemantic Error:\x1b[0m Parameter '" << param << "' already defined." << std::endl;
             throw std::runtime_error("Semantic error");
         }
     }
@@ -50,7 +50,7 @@ void SemanticAnalyzer::visit(StmtNode* node) {
             visit(varDecl->initializer.get());
         }
         if (!currentScope->declare(varDecl->name, "int")) {
-            std::cerr << "Semantic Error: Variable '" << varDecl->name << "' already declared in this scope." << std::endl;
+            std::cerr << "\x1b[31mSemantic Error:\x1b[0m Variable '" << varDecl->name << "' already declared in this scope." << std::endl;
             throw std::runtime_error("Semantic error");
         }
     } else if (auto* exprStmt = dynamic_cast<ExprStmtNode*>(node)) {
@@ -68,6 +68,15 @@ void SemanticAnalyzer::visit(StmtNode* node) {
     } else if (auto* whileStmt = dynamic_cast<WhileStmtNode*>(node)) {
         visit(whileStmt->condition.get());
         visit(whileStmt->body.get());
+    } else if (auto* forStmt = dynamic_cast<ForStmtNode*>(node)) {
+        // Evaluate in a block to isolate 'init' scope? No, C89 doesn't allow declarations in for(int i=0;) without block, but our parser allows it if we treat init as statement. Wait, if init has a VarDecl, it should be in the current scope or a new scope.
+        // Let's create a new scope for the for-loop variables just in case.
+        enterScope();
+        if (forStmt->init) visit(forStmt->init.get());
+        if (forStmt->condition) visit(forStmt->condition.get());
+        if (forStmt->increment) visit(forStmt->increment.get());
+        visit(forStmt->body.get());
+        leaveScope();
     } else if (auto* blockStmt = dynamic_cast<BlockStmtNode*>(node)) {
         visit(blockStmt);
     }
@@ -77,7 +86,7 @@ void SemanticAnalyzer::visit(ExprNode* node) {
     if (auto* varExpr = dynamic_cast<VariableExprNode*>(node)) {
         Symbol* sym = currentScope->resolve(varExpr->name);
         if (!sym) {
-            std::cerr << "Semantic Error: Undefined variable '" << varExpr->name << "'." << std::endl;
+            std::cerr << "\x1b[31mSemantic Error:\x1b[0m Undefined variable '" << varExpr->name << "'." << std::endl;
             throw std::runtime_error("Semantic error");
         }
     } else if (auto* binaryExpr = dynamic_cast<BinaryExprNode*>(node)) {
@@ -87,7 +96,7 @@ void SemanticAnalyzer::visit(ExprNode* node) {
         // If it's an assignment, check if lhs is an L-value
         if (binaryExpr->op == TokenType::Assign) {
             if (!dynamic_cast<VariableExprNode*>(binaryExpr->lhs.get())) {
-                std::cerr << "Semantic Error: Left hand side of assignment must be a variable." << std::endl;
+                std::cerr << "\x1b[31mSemantic Error:\x1b[0m Left hand side of assignment must be a variable." << std::endl;
                 throw std::runtime_error("Semantic error");
             }
         }
@@ -105,7 +114,7 @@ void SemanticAnalyzer::visit(ExprNode* node) {
         visit(unaryExpr->operand.get());
         if (unaryExpr->op == TokenType::Ampersand) {
             if (!dynamic_cast<VariableExprNode*>(unaryExpr->operand.get())) {
-                std::cerr << "Semantic Error: Address-of operator '&' requires a variable." << std::endl;
+                std::cerr << "\x1b[31mSemantic Error:\x1b[0m Address-of operator '&' requires a variable." << std::endl;
                 throw std::runtime_error("Semantic error");
             }
         }

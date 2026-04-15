@@ -182,7 +182,7 @@ std::vector<Token> Lexer::tokenize() {
         }
         
         if (type == TokenType::Unknown) {
-            throw std::runtime_error("Lexical Error at line " + std::to_string(startLine) + ":" + std::to_string(startColumn) + " - Unexpected character '" + std::string(1, c) + "'");
+            throw std::runtime_error("\x1b[31mLexical Error\x1b[0m at line " + std::to_string(startLine) + ":" + std::to_string(startColumn) + " - Unexpected character '" + std::string(1, c) + "'");
         }
 
         tokens.push_back({type, text, startLine, startColumn});
