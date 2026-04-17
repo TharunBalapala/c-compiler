@@ -1,103 +1,151 @@
-# C Compiler
+# Mini C Compiler (minic)
 
-A hand-written, miniature C compiler implemented from scratch in modern C++17. This project is built specifically for academic demonstration, prioritizing clarity, educational value, and the transparency of compiler phases over complex build systems or production features.
+`minic` is a professional, portable compiler for a minimal subset of the C programming language. It performs all standard compiler phases, from lexical analysis to x86-32 assembly code generation, providing a hands-on tool for learning and compiling custom C-like programs.
 
-It pipelines a subset of the C programming language completely through **Lexical Analysis**, **Syntax Analysis**, **Semantic Analysis**, and **Code Generation** directly into executable `x86` (32-bit Intel syntax) assembly.
+## Features
 
----
+- **Lexical Analysis (Scanner)**: Tokenizes input strings accurately and handles keywords, identifiers, constants, and string literals.
+- **Syntax Analysis (Parser)**: Builds an Abstract Syntax Tree (AST) supporting loops, conditionals, functions, and mathematical expressions using Recursive Descent.
+- **Semantic Analysis**: Enforces scope rules, manages the symbol table, stack offsets for variables, and verifies semantic correctness.
+- **Code Generation**: Translates the AST directly into unoptimized x86-32 Intel-syntax assembly.
+- **Native Assembly & Linking**: Automatically calls the GCC backend to assemble and link generated code into a runnable executable.
 
-## 🚀 Features & Academic Focus
+## Project Structure
 
-- **No Parser Generators:** Built without external tools like Flex or Bison. The parser is a handwritten **Recursive Descent Parser**, demonstrating top-down grammatical analysis.
-- **Verbose Compiler Phases:** The compiler visually outputs the results of its internal passes (Token streams, AST trees, Symbol Tables) so professors and students can clearly verify its internal state.
-- **x86 Machine Translation & Automated Assembly:** Generates raw `.intel_syntax` assembly and automatically invokes `gcc` to natively assemble the `.s` into a runnable `.exe` on Windows. Models the **CDECL calling convention** to properly handle function parameters on the stack and interface with the C Standard Library (`printf`, `scanf`).
-- **Core C Subset:** 
-  - `int` variables and arithmetic (`+`, `-`, `*`, `/`, `%`)
-  - Control Flow (`if/else`, `while`, `return`)
-  - Relational Operators (`==`, `!=`, `<`, `>`, `<=`, `>=`)
-  - User-defined functions with parameters
-  - Pointers (`&` address-of)
+```text
+/minic
+├── src/
+│   └── main.cpp           # Compiler entry point and CLI logic
+├── include/
+│   ├── lexer.h            # Lexer and Token definitions
+│   ├── parser.h           # Recursive Descent Parser
+│   ├── ast.h              # Abstract Syntax Tree nodes
+│   ├── semantic.h         # Scope and Symbol Table logic
+│   ├── codegen.h          # x86-32 Code Generator
+│   └── ast_printer.h      # AST visualizer class
+├── lib/                   # Implementation files for core compiler modules
+├── tests/                 # Sample `.mc` source files to compile
+├── CMakeLists.txt         # Cross-platform build configuration
+└── README.md              # Project documentation
+```
 
----
-
-## 🧠 The Compiler Pipeline
-
-This project cleanly separates the compilation process into four distinct modules (see `src/` for source code):
-
-1. **Phase 1: Lexical Analysis (`lexer.cpp`)**
-   Reads raw source code characters and converts them into a linear stream of `Token` objects.
-2. **Phase 2: Syntax Analysis (`parser.cpp` & `ast_printer.cpp`)**
-   Consumes the token stream to build an **Abstract Syntax Tree (AST)** representing the hierarchical grammar of the code. The `ASTPrinter` visually dumps this tree to the console.
-3. **Phase 3: Semantic Analysis (`semantic.cpp`)**
-   A tree-walking pass that builds hierarchical **Symbol Tables** mapping variables to stack offsets, enforcing scoping rules and catching undeclared variables.
-4. **Phase 4 & 5: Code Generation & Assembly (`codegen.cpp` -> `gcc`)**
-   A final tree-walker that translates the validated AST into Windows 32-bit Intel Assembly (`.s`), managing `ebp/esp` stack frames and conditional jumps. Finally, it delegates to `gcc` via a highly-authentic system pipeline to instantly assemble a ready-to-run `.exe`.
-
----
-
-## 💻 Building and Running
-
-This project intentionally avoids complex build systems like CMake to ensure it is trivially easy to compile and evaluate on any machine with `g++`.
+## Installation
 
 ### Prerequisites
-- `g++` (MinGW) installed and added to your system PATH.
+- **CMake** (3.10 or higher)
+- **C++17** compatible compiler (GCC, Clang, MSVC)
+- **GCC (MinGW on Windows)**: The final assembly and linking phase strictly relies on the `gcc` command being available in your system's PATH.
 
-### 1. Compile the Compiler
-Run the following single command from the root of the repository to compile the compiler itself:
-```powershell
-g++ -std=c++17 -Wall -Wextra src/*.cpp -o compiler.exe
+### Build Steps (All Platforms)
+
+1. **Clone the repository and enter the directory**:
+   ```bash
+   cd minic
+   ```
+
+2. **Generate the build files with CMake**:
+   ```bash
+   cmake -B build -S .
+   ```
+
+3. **Compile the `minic` executable**:
+   ```bash
+   cmake --build build
+   ```
+
+### Installation Steps
+
+#### On Linux / macOS
+To make `minic` globally available, simply copy the binary to your system's `bin` directory:
+```bash
+sudo cp build/minic /usr/local/bin/
+```
+You can now run `minic` from anywhere!
+
+#### On Windows
+1. Locate the built `minic.exe` in the `build/Debug/` or `build/` directory.
+2. Move it to a dedicated tools folder (e.g., `C:\tools\minic\`).
+3. Open your **Environment Variables** settings and add that tools folder to your `PATH` variable.
+4. Open a new Command Prompt or PowerShell, and type `minic --version` to verify.
+
+## Usage
+
+Compile a `.mc` file directly into an executable:
+```bash
+minic tests/hello.mc
 ```
 
-### 2. Run the Compiler (Test the C code)
-We provide a comprehensive demonstration file `test.c` that includes a while-loop, standard IO, and user-defined functions. Pass it to the compiler:
-```powershell
-.\compiler.exe test.c
-```
-*(Watch the console! The compiler will output its Tokens, Abstract Syntax Tree, Symbol Table registrations, and will automatically invoke GCC to build the native executable).*
-
-### 3. Execute
-Run the final generated program:
-```powershell
-.\test.exe
+Place the output executable into a custom named file:
+```bash
+minic tests/hello.mc -o my_program.exe
 ```
 
----
+Generate **assembly only** without linking:
+```bash
+minic -S tests/hello.mc
+```
+*(Produces `hello.s` in the current directory).*
 
-## 📝 Example C Program (`test.c`)
-The provided `test.c` demonstrates the compiler's full capabilities:
+View **verbose diagnostic output** (useful for debugging the tokenizer or AST):
+```bash
+minic --verbose tests/hello.mc
+```
 
+Print version or help info:
+```bash
+minic --version
+minic --help
+```
+
+## Example Input / Output
+
+**Input (`tests/hello.mc`):**
 ```c
-int add(int a, int b) {
-    return a + b;
-}
-
-int multiply(int a, int b) {
-    return a * b;
-}
-
 int main() {
-    int i = 0;
-    int sum = 0;
-    int user_input;
-    
-    while (i < 5) {
-        sum = sum + i;
-        i = i + 1;
-    }
-    printf("The loop computed sum: %d\n", sum);
-
-    printf("Enter a number to double: ");
-    scanf("%d", &user_input);
-
-    int doubled = multiply(user_input, 2);
-    int final_result = add(sum, doubled);
-    
-    printf("Your number doubled is: %d\n", doubled);
-    printf("Sum + Doubled = %d\n", final_result);
-
+    printf("Hello from minic!\n");
     return 0;
 }
 ```
 
----
-*Created for Academic Demonstration of Compiler Design Principles.*
+**Compilation:**
+```bash
+> minic -v tests/hello.mc
+Compiling: tests/hello.mc
+
+============================================
+        COMPILER PIPELINE INITIATED         
+============================================
+
+--- Phase 1: Lexical Analysis ---
+Lexing successful (13 tokens).
+Token Stream:
+...
+
+--- Phase 2: Syntax Analysis (Parser) ---
+Parsing successful! AST root contains 1 function(s).
+...
+
+--- Phase 3: Semantic Analysis ---
+Semantic analysis successful! Symbols resolved and scopes verified.
+
+--- Phase 4: Code Generation (x86-32 Assembly) ---
+Code generation successful! Wrote generic assembly to: tests/hello.s
+
+--- Phase 5: Native Assembly & Linking ---
+Invoking GCC to assemble tests/hello.s into tests/hello.exe...
+
+============================================
+Compilation completed successfully!
+Executable built: tests/hello.exe
+Run it using: .\tests\hello.exe
+============================================
+```
+
+**Execution:**
+```bash
+> .\tests\hello.exe
+Hello from minic!
+```
+
+## Contributing
+Contributions are welcome. Please ensure your code conforms to C++17 standards and uses CMake for builds.
