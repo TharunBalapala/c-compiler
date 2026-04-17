@@ -55,12 +55,21 @@
 
 ### Installation Steps
 
-#### On Linux / macOS
-To make `minic` globally available, simply copy the binary to your system's `bin` directory:
-```bash
-sudo cp build/minic /usr/local/bin/
-```
 You can now run `minic` from anywhere!
+
+#### Debian Package (.deb) - Best for sharing!
+If you want to share `minic` with a friend or install it properly on a Debian/Ubuntu system, you can generate a `.deb` package:
+
+1. **Build the package**:
+   ```bash
+   cd build
+   cpack -G DEB
+   ```
+2. **Install the package**:
+   ```bash
+   sudo apt install ./minic-1.0.0-Linux.deb
+   ```
+This will automatically handle all dependencies like `gcc-multilib`.
 
 #### On Windows
 1. Locate the built `minic.exe` in the `build/Debug/` or `build/` directory.

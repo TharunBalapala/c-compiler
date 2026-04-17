@@ -1,0 +1,15 @@
+Source: minic
+Section: devel
+Priority: optional
+Maintainer: MiniC Developers <dev@example.com>
+Build-Depends: debhelper-compat (= 13), cmake, g++
+Standards-Version: 4.5.0
+Homepage: https://github.com/example/minic
+
+Package: minic
+Architecture: any
+Depends: gcc, gcc-multilib, libc6-dev-i386, ${shlibs:Depends}, ${misc:Depends}
+Description: A minimal subset C compiler producing x86-32 assembly.
+ minic is a professional, portable compiler for a minimal subset of the C
+ programming language. It performs all standard compiler phases, from
+ lexical analysis to x86-32 assembly code generation.
