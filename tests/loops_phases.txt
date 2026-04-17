@@ -1,4 +1,4 @@
-Compiling: tests/loops.mc
+Compiling: tests\loops.mc
 
 ============================================
         COMPILER PIPELINE INITIATED         
@@ -341,14 +341,14 @@ Semantic analysis successful! Symbols resolved and scopes verified.
   [SymbolTable] Registered 'k' (type: int) at stack offset -40
   [SymbolTable] Registered 'doubled' (type: int) at stack offset -48
   [SymbolTable] Registered 'final_result' (type: int) at stack offset -56
-Code generation successful! Wrote generic assembly to: tests/loops.s
+Code generation successful! Wrote generic assembly to: tests\loops.s
 
 --- Phase 5: Native Assembly & Linking ---
-Invoking GCC to assemble tests/loops.s into tests/loops.exe...
+Invoking GCC to assemble tests\loops.s into tests\loops.exe...
 
 ============================================
 Compilation completed successfully!
-Executable built: tests/loops.exe
-Run it using: .\tests/loops.exe
+Executable built: tests\loops.exe
+Run it using: .\tests\loops.exe
 ============================================
 
