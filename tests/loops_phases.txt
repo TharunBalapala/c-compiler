@@ -1,0 +1,354 @@
+Compiling: tests/loops.mc
+
+============================================
+        COMPILER PIPELINE INITIATED         
+============================================
+
+--- Phase 1: Lexical Analysis ---
+Lexing successful (168 tokens).
+Token Stream:
+  [Keyword:int | 'int']
+  [Identifier | 'add']
+  [Symbol/Operator | '(']
+  [Keyword:int | 'int']
+  [Identifier | 'a']
+  [Symbol/Operator | ',']
+  [Keyword:int | 'int']
+  [Identifier | 'b']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | '{']
+  [Keyword:return | 'return']
+  [Identifier | 'a']
+  [Symbol/Operator | '+']
+  [Identifier | 'b']
+  [Symbol/Operator | ';']
+  [Symbol/Operator | '}']
+  [Keyword:int | 'int']
+  [Identifier | 'multiply']
+  [Symbol/Operator | '(']
+  [Keyword:int | 'int']
+  [Identifier | 'a']
+  [Symbol/Operator | ',']
+  [Keyword:int | 'int']
+  [Identifier | 'b']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | '{']
+  [Keyword:return | 'return']
+  [Identifier | 'a']
+  [Symbol/Operator | '*']
+  [Identifier | 'b']
+  [Symbol/Operator | ';']
+  [Symbol/Operator | '}']
+  [Keyword:int | 'int']
+  [Identifier | 'main']
+  [Symbol/Operator | '(']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | '{']
+  [Keyword:int | 'int']
+  [Identifier | 'i']
+  [Symbol/Operator | '=']
+  [Number | '0']
+  [Symbol/Operator | ';']
+  [Keyword:int | 'int']
+  [Identifier | 'sum1']
+  [Symbol/Operator | '=']
+  [Number | '0']
+  [Symbol/Operator | ';']
+  [Keyword:int | 'int']
+  [Identifier | 'input']
+  [Symbol/Operator | ';']
+  [Keyword:while | 'while']
+  [Symbol/Operator | '(']
+  [Identifier | 'i']
+  [Symbol/Operator | '<']
+  [Number | '5']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | '{']
+  [Identifier | 'sum1']
+  [Symbol/Operator | '=']
+  [Identifier | 'sum1']
+  [Symbol/Operator | '+']
+  [Identifier | 'i']
+  [Symbol/Operator | ';']
+  [Identifier | 'i']
+  [Symbol/Operator | '=']
+  [Identifier | 'i']
+  [Symbol/Operator | '+']
+  [Number | '1']
+  [Symbol/Operator | ';']
+  [Symbol/Operator | '}']
+  [Identifier | 'printf']
+  [Symbol/Operator | '(']
+  [String | 'While loop computed sum: %d\n']
+  [Symbol/Operator | ',']
+  [Identifier | 'sum1']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | ';']
+  [Keyword:int | 'int']
+  [Identifier | 'sum2']
+  [Symbol/Operator | '=']
+  [Number | '0']
+  [Symbol/Operator | ';']
+  [Keyword:int | 'int']
+  [Identifier | 'k']
+  [Symbol/Operator | ';']
+  [Keyword:for | 'for']
+  [Symbol/Operator | '(']
+  [Identifier | 'k']
+  [Symbol/Operator | '=']
+  [Number | '0']
+  [Symbol/Operator | ';']
+  [Identifier | 'k']
+  [Symbol/Operator | '<']
+  [Number | '5']
+  [Symbol/Operator | ';']
+  [Identifier | 'k']
+  [Symbol/Operator | '=']
+  [Identifier | 'k']
+  [Symbol/Operator | '+']
+  [Number | '1']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | '{']
+  [Identifier | 'sum2']
+  [Symbol/Operator | '=']
+  [Identifier | 'sum2']
+  [Symbol/Operator | '+']
+  [Identifier | 'k']
+  [Symbol/Operator | ';']
+  [Symbol/Operator | '}']
+  [Identifier | 'printf']
+  [Symbol/Operator | '(']
+  [String | 'For loop computed sum: %d\n']
+  [Symbol/Operator | ',']
+  [Identifier | 'sum2']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | ';']
+  [Identifier | 'printf']
+  [Symbol/Operator | '(']
+  [String | 'Enter a number to double: ']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | ';']
+  [Identifier | 'scanf']
+  [Symbol/Operator | '(']
+  [String | '%d']
+  [Symbol/Operator | ',']
+  [Symbol/Operator | '&']
+  [Identifier | 'input']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | ';']
+  [Keyword:int | 'int']
+  [Identifier | 'doubled']
+  [Symbol/Operator | '=']
+  [Identifier | 'multiply']
+  [Symbol/Operator | '(']
+  [Identifier | 'input']
+  [Symbol/Operator | ',']
+  [Number | '2']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | ';']
+  [Keyword:int | 'int']
+  [Identifier | 'final_result']
+  [Symbol/Operator | '=']
+  [Identifier | 'add']
+  [Symbol/Operator | '(']
+  [Identifier | 'sum1']
+  [Symbol/Operator | ',']
+  [Identifier | 'doubled']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | ';']
+  [Identifier | 'printf']
+  [Symbol/Operator | '(']
+  [String | 'Your number doubled is: %d\n']
+  [Symbol/Operator | ',']
+  [Identifier | 'doubled']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | ';']
+  [Identifier | 'printf']
+  [Symbol/Operator | '(']
+  [String | 'Sum + Doubled = %d\n']
+  [Symbol/Operator | ',']
+  [Identifier | 'final_result']
+  [Symbol/Operator | ')']
+  [Symbol/Operator | ';']
+  [Keyword:return | 'return']
+  [Number | '0']
+  [Symbol/Operator | ';']
+  [Symbol/Operator | '}']
+  [EOF | 'EOF']
+
+--- Phase 2: Syntax Analysis (Parser) ---
+Parsing successful! AST root contains 3 function(s).
+Syntax Tree Dump:
+ProgramRoot
+  FunctionDecl: add(int a, int b) -> int
+    BlockStatement
+      ReturnStatement
+        BinaryExpr: +
+          LHS:
+            VariableExpr: a
+          RHS:
+            VariableExpr: b
+  FunctionDecl: multiply(int a, int b) -> int
+    BlockStatement
+      ReturnStatement
+        BinaryExpr: *
+          LHS:
+            VariableExpr: a
+          RHS:
+            VariableExpr: b
+  FunctionDecl: main() -> int
+    BlockStatement
+      VarDecl: int i
+        Initializer:
+          NumberExpr: 0
+      VarDecl: int sum1
+        Initializer:
+          NumberExpr: 0
+      VarDecl: int input
+      WhileStatement
+        Condition:
+          BinaryExpr: <
+            LHS:
+              VariableExpr: i
+            RHS:
+              NumberExpr: 5
+        Body:
+          BlockStatement
+            ExpressionStatement
+              BinaryExpr: =
+                LHS:
+                  VariableExpr: sum1
+                RHS:
+                  BinaryExpr: +
+                    LHS:
+                      VariableExpr: sum1
+                    RHS:
+                      VariableExpr: i
+            ExpressionStatement
+              BinaryExpr: =
+                LHS:
+                  VariableExpr: i
+                RHS:
+                  BinaryExpr: +
+                    LHS:
+                      VariableExpr: i
+                    RHS:
+                      NumberExpr: 1
+      ExpressionStatement
+        CallExpr: printf()
+          Arguments:
+            StringExpr: "While loop computed sum: %d\n"
+            VariableExpr: sum1
+      VarDecl: int sum2
+        Initializer:
+          NumberExpr: 0
+      VarDecl: int k
+      ForStatement
+        Init:
+          ExpressionStatement
+            BinaryExpr: =
+              LHS:
+                VariableExpr: k
+              RHS:
+                NumberExpr: 0
+        Condition:
+          BinaryExpr: <
+            LHS:
+              VariableExpr: k
+            RHS:
+              NumberExpr: 5
+        Increment:
+          BinaryExpr: =
+            LHS:
+              VariableExpr: k
+            RHS:
+              BinaryExpr: +
+                LHS:
+                  VariableExpr: k
+                RHS:
+                  NumberExpr: 1
+        Body:
+          BlockStatement
+            ExpressionStatement
+              BinaryExpr: =
+                LHS:
+                  VariableExpr: sum2
+                RHS:
+                  BinaryExpr: +
+                    LHS:
+                      VariableExpr: sum2
+                    RHS:
+                      VariableExpr: k
+      ExpressionStatement
+        CallExpr: printf()
+          Arguments:
+            StringExpr: "For loop computed sum: %d\n"
+            VariableExpr: sum2
+      ExpressionStatement
+        CallExpr: printf()
+          Arguments:
+            StringExpr: "Enter a number to double: "
+      ExpressionStatement
+        CallExpr: scanf()
+          Arguments:
+            StringExpr: "%d"
+            UnaryExpr: &
+              VariableExpr: input
+      VarDecl: int doubled
+        Initializer:
+          CallExpr: multiply()
+            Arguments:
+              VariableExpr: input
+              NumberExpr: 2
+      VarDecl: int final_result
+        Initializer:
+          CallExpr: add()
+            Arguments:
+              VariableExpr: sum1
+              VariableExpr: doubled
+      ExpressionStatement
+        CallExpr: printf()
+          Arguments:
+            StringExpr: "Your number doubled is: %d\n"
+            VariableExpr: doubled
+      ExpressionStatement
+        CallExpr: printf()
+          Arguments:
+            StringExpr: "Sum + Doubled = %d\n"
+            VariableExpr: final_result
+      ReturnStatement
+        NumberExpr: 0
+
+--- Phase 3: Semantic Analysis ---
+  [SymbolTable] Registered 'a' (type: int) at stack offset -8
+  [SymbolTable] Registered 'b' (type: int) at stack offset -16
+  [SymbolTable] Registered 'a' (type: int) at stack offset -8
+  [SymbolTable] Registered 'b' (type: int) at stack offset -16
+  [SymbolTable] Registered 'i' (type: int) at stack offset -8
+  [SymbolTable] Registered 'sum1' (type: int) at stack offset -16
+  [SymbolTable] Registered 'input' (type: int) at stack offset -24
+  [SymbolTable] Registered 'sum2' (type: int) at stack offset -32
+  [SymbolTable] Registered 'k' (type: int) at stack offset -40
+  [SymbolTable] Registered 'doubled' (type: int) at stack offset -48
+  [SymbolTable] Registered 'final_result' (type: int) at stack offset -56
+Semantic analysis successful! Symbols resolved and scopes verified.
+
+--- Phase 4: Code Generation (x86-32 Assembly) ---
+  [SymbolTable] Registered 'i' (type: int) at stack offset -8
+  [SymbolTable] Registered 'sum1' (type: int) at stack offset -16
+  [SymbolTable] Registered 'input' (type: int) at stack offset -24
+  [SymbolTable] Registered 'sum2' (type: int) at stack offset -32
+  [SymbolTable] Registered 'k' (type: int) at stack offset -40
+  [SymbolTable] Registered 'doubled' (type: int) at stack offset -48
+  [SymbolTable] Registered 'final_result' (type: int) at stack offset -56
+Code generation successful! Wrote generic assembly to: tests/loops.s
+
+--- Phase 5: Native Assembly & Linking ---
+Invoking GCC to assemble tests/loops.s into tests/loops.exe...
+
+============================================
+Compilation completed successfully!
+Executable built: tests/loops.exe
+Run it using: .\tests/loops.exe
+============================================
+

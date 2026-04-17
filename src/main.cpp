@@ -113,7 +113,24 @@ int main(int argc, char* argv[]) {
         std::cerr << "minic: \x1b[33mwarning:\x1b[0m file '" << input_file << "' does not have a '.mc' extension.\n";
     }
 
+    // Determine output file names early
+    std::string base_name = input_file;
+    size_t last_dot = base_name.find_last_of('.');
+    if (last_dot != std::string::npos) {
+        base_name = base_name.substr(0, last_dot);
+    }
+    
+    std::string phases_file = base_name + "_phases.txt";
+    std::ofstream out_log_file(phases_file);
+    std::streambuf* coutbuf = nullptr;
+
     if (verbose) {
+        std::cout << "Compiling " << input_file << "...\n";
+        std::cout << "Phase results will be saved to: " << phases_file << "\n";
+        // Redirect cout to the phases file
+        coutbuf = std::cout.rdbuf();
+        std::cout.rdbuf(out_log_file.rdbuf());
+
         std::cout << "Compiling: " << input_file << "\n";
         std::cout << "\n============================================\n";
         std::cout << "        COMPILER PIPELINE INITIATED         \n";
@@ -169,13 +186,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Determine output file names
-    std::string base_name = input_file;
-    size_t last_dot = base_name.find_last_of('.');
-    if (last_dot != std::string::npos) {
-        base_name = base_name.substr(0, last_dot);
-    }
-
     std::string asm_file;
     std::string exe_file;
 
@@ -227,6 +237,12 @@ int main(int argc, char* argv[]) {
     } else if (verbose) {
         std::cout << "\nCompilation to assembly completed successfully.\n";
         std::cout << "Output: " << asm_file << "\n";
+    }
+
+    // Restore standard output
+    if (verbose && coutbuf) {
+        std::cout.rdbuf(coutbuf);
+        std::cout << "Compilation completed (phases saved to " << phases_file << ").\n";
     }
 
     return 0;
