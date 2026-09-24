@@ -158,3 +158,6 @@ Hello from minic!
 
 ## Contributing
 Contributions are welcome. Please ensure your code conforms to C++17 standards and uses CMake for builds.
+### Contributors
+- TharunBalapala
+- HasiniTaticherla
